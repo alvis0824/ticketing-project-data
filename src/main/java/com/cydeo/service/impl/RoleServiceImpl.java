@@ -1,38 +1,37 @@
 package com.cydeo.service.impl;
 
 import com.cydeo.dto.RoleDTO;
+import com.cydeo.entity.Role;
+import com.cydeo.repository.RoleRepository;
 import com.cydeo.service.RoleService;
-//import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service  //like @Component - creates bean
-public class RoleServiceImpl extends AbstractMapService<RoleDTO,Long> implements RoleService {
+@Service
+public class RoleServiceImpl implements RoleService {
+
+    private final RoleRepository roleRepository;
+
+    public RoleServiceImpl(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
     @Override
-    public RoleDTO save(RoleDTO role) {
-        return super.save(role.getId(),role);
+    public List<RoleDTO> listAllRoles() {
+
+        // Controller called me and requesting all RoleDTOs, so it can show in the drop-down in the UI
+        // I need to make a call to DB and get all the roles from table
+        // Go to repository and find a service(method) which gives me the roles from DB
+        // How I will call any service here?
+
+        List<Role> roleList = roleRepository.findAll();
+
+        return roleList;
     }
 
     @Override
     public RoleDTO findById(Long id) {
-        return super.findById(id);
+        return null;
     }
-
-    @Override
-    public List<RoleDTO> findAll() {
-        return super.findAll();
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        super.deleteById(id);
-    }
-
-    @Override
-    public void update(RoleDTO object) {
-        super.update(object.getId(), object);
-    }
-
 }
