@@ -47,5 +47,33 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteByUserName(String username) {
 
+        userRepository.deleteByUserName(username);
+
+    }
+
+    @Override
+    public UserDTO update(UserDTO user) {
+        // Find current user
+        User user1 = userRepository.findByUserName(user.getUserName());
+        // Map update user dto to entity object
+        User convertedUser = userMapper.convertToEntity(user);
+        // Set id to the converted user
+        convertedUser.setId(user1.getId());
+        // save the updated user in the DB
+        userRepository.save(convertedUser);
+
+        return findByUserName(user.getUserName());
+    }
+
+    @Override
+    public void delete(String username) {
+        // go to DB and get that user with username
+        User user = userRepository.findByUserName(username);
+
+        // change the is_deleted field to true
+        user.setIsDeleted(true);
+        userRepository.save(user);
+
+        // save the object in the DB
     }
 }
