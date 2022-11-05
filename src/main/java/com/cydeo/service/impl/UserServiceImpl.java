@@ -76,4 +76,12 @@ public class UserServiceImpl implements UserService {
 
         // save the object in the DB
     }
+
+    @Override
+    public List<UserDTO> listAllByRole(String role) {
+
+        List<User> users = userRepository.
+
+        return null;
+    }
 }
