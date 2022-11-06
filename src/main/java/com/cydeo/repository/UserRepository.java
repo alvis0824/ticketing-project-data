@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User,Long> {
 
-    User findByUserName(String username);
+    User findByUserName(String username);  // select * from users where user_name = 'username'
 
     @Transactional
     void deleteByUserName(String username);
