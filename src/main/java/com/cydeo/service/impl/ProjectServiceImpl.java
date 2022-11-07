@@ -9,6 +9,7 @@ import com.cydeo.mapper.ProjectMapper;
 import com.cydeo.mapper.UserMapper;
 import com.cydeo.repository.ProjectRepository;
 import com.cydeo.service.ProjectService;
+import com.cydeo.service.TaskService;
 import com.cydeo.service.UserService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,14 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMapper projectMapper;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final TaskService taskService;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper, UserService userService, UserMapper userMapper) {
+    public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper, UserService userService, UserMapper userMapper, TaskService taskService) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.userService = userService;
         this.userMapper = userMapper;
+        this.taskService = taskService;
     }
 
     @Override
@@ -76,10 +79,13 @@ public class ProjectServiceImpl implements ProjectService {
     public void delete(String code) {
 
         Project project = projectRepository.findByProjectCode(code);
-
         project.setIsDeleted(true);
 
+        project.setProjectCode(project.getProjectCode() + "-" + project.getId());   // SP00-1
+
         projectRepository.save(project);
+
+        taskService.deleteByProject(projectMapper.convertToDto(project));
 
     }
 
@@ -107,10 +113,11 @@ public class ProjectServiceImpl implements ProjectService {
 
             ProjectDTO obj = projectMapper.convertToDto(project);
 
-            obj.setUnfinishedTaskCounts(3);
-            obj.setCompleteTaskCounts(5);
+            obj.setUnfinishedTaskCounts(taskService.totalNonCompletedTask(project.getProjectCode()));
+            obj.setCompleteTaskCounts(taskService.totalCompletedTask(project.getProjectCode()));
 
             return obj;
-        }).collect(Collectors.toList());
+        }
+        ).collect(Collectors.toList());
     }
 }
