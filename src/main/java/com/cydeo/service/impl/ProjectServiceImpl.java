@@ -98,6 +98,8 @@ public class ProjectServiceImpl implements ProjectService {
 
         projectRepository.save(project);
 
+        taskService.completeByProject(projectMapper.convertToDto(project));
+
     }
 
     @Override
@@ -119,5 +121,11 @@ public class ProjectServiceImpl implements ProjectService {
             return obj;
         }
         ).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProjectDTO> listAllNonCompletedByAssignedManager(UserDTO assignedManager) {
+        List<Project> projects = projectRepository.findAllByProjectStatusIsNotAndAssignedManager(Status.COMPLETE, userMapper.convertToEntity(assignedManager));
+        return projects.stream().map(projectMapper::convertToDto).collect(Collectors.toList());
     }
 }
